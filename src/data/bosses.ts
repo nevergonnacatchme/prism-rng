@@ -654,7 +654,7 @@ export function getAuraCombatStats(item: RNGItem): AuraCombatStats {
     return CUSTOM_AURA_ABILITIES[item.id].stats;
   }
 
-  // Scaling based on rarity (Massively Buffed!)
+  // Scaling based on rarity (Balanced progression hierarchy)
   switch (item.rarity) {
     case 'Impossible':
       return { health: 2200000, attack: 38000, defense: 1500, attackSpeed: 2.8, critChance: 0.9 };
@@ -665,16 +665,16 @@ export function getAuraCombatStats(item: RNGItem): AuraCombatStats {
     case 'Mythic':
       return { health: 450000, attack: 8000, defense: 350, attackSpeed: 1.75, critChance: 0.5 };
     case 'Legendary':
-      return { health: 4000, attack: 480, defense: 80, attackSpeed: 1.25, critChance: 0.2 };
+      return { health: 35000, attack: 1800, defense: 220, attackSpeed: 1.35, critChance: 0.25 };
     case 'Epic':
-      return { health: 2600, attack: 300, defense: 55, attackSpeed: 1.15, critChance: 0.15 };
+      return { health: 12000, attack: 850, defense: 140, attackSpeed: 1.25, critChance: 0.18 };
     case 'Rare':
-      return { health: 1800, attack: 180, defense: 35, attackSpeed: 1.1, critChance: 0.12 };
+      return { health: 5500, attack: 450, defense: 80, attackSpeed: 1.15, critChance: 0.12 };
     case 'Uncommon':
-      return { health: 1200, attack: 110, defense: 22, attackSpeed: 1.0, critChance: 0.08 };
+      return { health: 2800, attack: 220, defense: 45, attackSpeed: 1.05, critChance: 0.08 };
     case 'Common':
     default:
-      return { health: 750, attack: 65, defense: 14, attackSpeed: 0.9, critChance: 0.05 };
+      return { health: 1500, attack: 120, defense: 25, attackSpeed: 0.95, critChance: 0.05 };
   }
 }
 

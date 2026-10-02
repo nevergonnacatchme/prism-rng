@@ -54,6 +54,9 @@ export const TopBar: React.FC<TopBarProps> = ({
             <span className="uppercase font-black text-slate-100 tracking-widest">
               PRISM RNG
             </span>
+            <span className="text-[10px] text-slate-400 font-normal opacity-80 normal-case tracking-normal">
+              (inspired by Sols RNG)
+            </span>
           </button>
         </div>
 

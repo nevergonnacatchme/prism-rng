@@ -177,6 +177,12 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
 
   const arenaRef = useRef<HTMLDivElement>(null);
   const nextIdRef = useRef<number>(1);
+  const lastBossAttackRef = useRef<number>(0);
+  const lastHeavyCleaveRef = useRef<number>(0);
+  const playerStatsRef = useRef(playerStats);
+  useEffect(() => {
+    playerStatsRef.current = playerStats;
+  }, [playerStats]);
 
   // Floating damage number generator
   const spawnDamage = (text: string, x: number, y: number, color = '#FFFFFF', isCrit = false) => {
@@ -284,7 +290,7 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
       setIsDashing(false);
       isDashingRef.current = false;
     }, 280);
-  }, [dashCooldown, isPaused, battleState, playerFacingLeft, playerStats.attack]);
+  }, [dashCooldown, isPaused, battleState, playerFacingLeft, playerStats.attack, playerElementType]);
 
   // UNLEASH SPECIAL ABILITY [E]
   const executeSpecialAbility = useCallback(() => {
@@ -433,11 +439,12 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
     setDashCooldown(0);
     setBattleState('fighting');
     setRewardsClaimed(false);
+    lastBossAttackRef.current = 0;
   }, [equippedAura, selectedLevelIndex]);
 
   useEffect(() => {
     initBattle(selectedLevelIndex);
-  }, [equippedAura.id, selectedLevelIndex]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [equippedAura, selectedLevelIndex, initBattle]);
 
   const handleVictory = () => {
     sound.playVictory();
@@ -577,6 +584,16 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
     return () => cancelAnimationFrame(animFrame);
   }, [battleState, isPaused, gameSpeed, currentBoss.attack]);
 
+  // Keep latest values in refs so the tick interval below is NOT torn down on every render.
+  // (playerStats is a fresh object each render and the rAF loop re-renders ~60x/sec, which
+  // used to clear the 50ms interval before it could ever fire -> boss never moved/attacked.)
+  const autoM1Ref = useRef(autoM1);
+  const comboStepRef = useRef(comboStep);
+  const executePlayerM1Ref = useRef(executePlayerM1);
+  autoM1Ref.current = autoM1;
+  comboStepRef.current = comboStep;
+  executePlayerM1Ref.current = executePlayerM1;
+
   // COMBAT TICK LOOP (Boss AI Decisions, Cooldowns, Auto-M1)
   useEffect(() => {
     if (battleState !== 'fighting' || isPaused) return;
@@ -586,17 +603,18 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
       setDashCooldown((cd) => Math.max(0, cd - 0.05 * gameSpeed));
       setComboTimer((t) => {
         const next = Math.max(0, t - 0.05 * gameSpeed);
-        if (next === 0 && comboStep > 1) {
+        if (next === 0 && comboStepRef.current > 1) {
           setComboStep(1);
         }
         return next;
       });
 
-      if (autoM1) {
-        executePlayerM1();
+      if (autoM1Ref.current) {
+        executePlayerM1Ref.current();
       }
 
-      // BOSS MELEE AI
+      // BOSS COMBAT & QTE TIMING DODGE BAR
+      const now = Date.now();
       const p = playerPosRef.current;
       const b = bossPosRef.current;
       const distance = p.x - b.x;
@@ -604,34 +622,37 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
       const faceLeft = distance < 0;
       setBossFacingLeft(faceLeft);
 
-      // Update active QTE Timing Bar progress
+      // Update active QTE Timing Bar progress (GREEN DODGE BAR)
       if (qteRef.current.active) {
-        qteRef.current.progress += 3.5 * gameSpeed;
+        qteRef.current.progress += 2.8 * gameSpeed;
         setQteProgress(qteRef.current.progress);
 
         if (qteRef.current.progress >= 100) {
           // QTE FAILED — Heavy Slam Hit!
           qteRef.current.active = false;
           setQteActive(false);
-          setPlayerHitFlash(true);
-          setTimeout(() => setPlayerHitFlash(false), 150);
 
-          const heavyDmg = Math.round(currentBoss.attack * 2.2);
-          setPlayerHp((prev) => {
-            const next = Math.max(0, prev - heavyDmg);
-            if (next === 0 && battleState === 'fighting') handleDefeat();
-            return next;
-          });
-          spawnDamage(`💥 -${heavyDmg} HEAVY SLAM!`, playerPosRef.current.x, playerPosRef.current.y - 50, '#EF4444', true);
+          if (!isDashingRef.current) {
+            setPlayerHitFlash(true);
+            setTimeout(() => setPlayerHitFlash(false), 150);
+
+            const heavyDmg = Math.round(currentBoss.attack * 2.2);
+            setPlayerHp((prev) => {
+              const next = Math.max(0, prev - heavyDmg);
+              if (next === 0 && battleState === 'fighting') handleDefeat();
+              return next;
+            });
+            spawnDamage(`💥 -${heavyDmg} CRUSHING SLAM!`, playerPosRef.current.x, playerPosRef.current.y - 50, '#EF4444', true);
+          }
         }
       }
 
-      // Random Chance to trigger a Big Swing with Timing Dodge Bar (Every ~6 seconds)
-      const shouldTriggerHeavyCleave = Math.random() < 0.08 && !qteRef.current.active && bossActionRef.current === 'walking';
-
-      if (shouldTriggerHeavyCleave) {
+      // Check Heavy Cleave QTE Trigger (Every ~7.5 seconds)
+      const canTriggerQTE = now - lastHeavyCleaveRef.current >= 7500 && !qteRef.current.active;
+      if (canTriggerQTE && Math.random() < 0.3) {
+        lastHeavyCleaveRef.current = now;
         setBossAction('heavy_cleave_charging');
-        qteRef.current = { active: true, progress: 0, targetMin: 55, targetMax: 82 };
+        qteRef.current = { active: true, progress: 0, targetMin: 52, targetMax: 80 };
         setQteActive(true);
         setQteProgress(0);
 
@@ -642,71 +663,72 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
 
           setTimeout(() => {
             setBossSwingArc(false);
-            setBossAction('recovering');
-            setTimeout(() => setBossAction('walking'), 500 / gameSpeed);
+            setBossAction('walking');
           }, 250);
-        }, 1200 / gameSpeed);
-      } 
-      // Normal Melee Chasing & Swings
-      else if (absDist > 90 && bossActionRef.current === 'walking') {
-        const walkSpeed = (2.2 + currentBoss.level * 0.3) * gameSpeed;
+        }, 1100 / gameSpeed);
+      }
+
+      // Move toward player
+      if (absDist > 65 && !qteRef.current.active) {
+        const walkSpeed = (3.5 + currentBoss.level * 0.4) * gameSpeed;
         b.x += faceLeft ? -walkSpeed : walkSpeed;
-      } else if (absDist <= 90 && bossActionRef.current === 'walking') {
-        setBossAction('winding_up');
+      }
+
+      // Execute Regular Melee Weapon Swing
+      const swingCooldown = (950 / currentBoss.attackSpeed) / gameSpeed;
+      if (!qteRef.current.active && now - lastBossAttackRef.current >= swingCooldown) {
+        lastBossAttackRef.current = now;
+        setBossAction('swinging');
+        setBossSwingArc(true);
+        sound.playHit();
+
+        const curDist = Math.abs(playerPosRef.current.x - bossPosRef.current.x);
+        const didHitPlayer = curDist <= 140 && !isDashingRef.current;
+
+        if (didHitPlayer) {
+          setPlayerHitFlash(true);
+          setTimeout(() => setPlayerHitFlash(false), 120);
+
+          const curStats = playerStatsRef.current;
+          const rawDmg = Math.round(currentBoss.attack * (0.85 + Math.random() * 0.3));
+          const effectiveDmg = Math.max(5, rawDmg - curStats.defense);
+
+          setPlayerShield((curShield) => {
+            let rem = effectiveDmg;
+            let nShield = curShield;
+            if (curShield > 0) {
+              if (curShield >= rem) {
+                nShield = curShield - rem;
+                rem = 0;
+                spawnDamage(`Absorbed ${effectiveDmg}`, playerPosRef.current.x, playerPosRef.current.y - 45, '#38BDF8');
+              } else {
+                rem -= curShield;
+                nShield = 0;
+              }
+            }
+            if (rem > 0) {
+              setPlayerHp((prev) => {
+                const next = Math.max(0, prev - rem);
+                if (next === 0 && battleState === 'fighting') handleDefeat();
+                return next;
+              });
+              spawnDamage(`-${rem}`, playerPosRef.current.x, playerPosRef.current.y - 45, '#EF4444');
+            }
+            return nShield;
+          });
+        } else {
+          spawnDamage('DODGED!', playerPosRef.current.x, playerPosRef.current.y - 45, '#34D399');
+        }
 
         setTimeout(() => {
-          setBossAction('swinging');
-          setBossSwingArc(true);
-          sound.playHit();
-
-          const curDist = Math.abs(playerPosRef.current.x - bossPosRef.current.x);
-          const didHitPlayer = curDist <= 105 && !isDashingRef.current;
-
-          if (didHitPlayer) {
-            setPlayerHitFlash(true);
-            setTimeout(() => setPlayerHitFlash(false), 120);
-
-            const rawDmg = Math.round(currentBoss.attack * (0.9 + Math.random() * 0.2));
-            const effectiveDmg = Math.max(5, rawDmg - playerStats.defense);
-
-            setPlayerShield((curShield) => {
-              let rem = effectiveDmg;
-              let nShield = curShield;
-              if (curShield > 0) {
-                if (curShield >= rem) {
-                  nShield = curShield - rem;
-                  rem = 0;
-                  spawnDamage(`Absorbed ${effectiveDmg}`, playerPosRef.current.x, playerPosRef.current.y - 45, '#38BDF8');
-                } else {
-                  rem -= curShield;
-                  nShield = 0;
-                }
-              }
-              if (rem > 0) {
-                setPlayerHp((prev) => {
-                  const next = Math.max(0, prev - rem);
-                  if (next === 0 && battleState === 'fighting') handleDefeat();
-                  return next;
-                });
-                spawnDamage(`-${rem}`, playerPosRef.current.x, playerPosRef.current.y - 45, '#EF4444');
-              }
-              return nShield;
-            });
-          } else {
-            spawnDamage('DODGED!', playerPosRef.current.x, playerPosRef.current.y - 45, '#34D399');
-          }
-
-          setTimeout(() => {
-            setBossSwingArc(false);
-            setBossAction('recovering');
-            setTimeout(() => setBossAction('walking'), 450 / gameSpeed);
-          }, 200);
-        }, 380 / gameSpeed);
+          setBossSwingArc(false);
+          setBossAction('walking');
+        }, 220 / gameSpeed);
       }
     }, 50);
 
     return () => clearInterval(interval);
-  }, [battleState, isPaused, gameSpeed, autoM1, comboStep, currentBoss, playerStats, executePlayerM1, setBossAction]);
+  }, [battleState, isPaused, gameSpeed, currentBoss, setBossAction]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const playerHpPct = Math.max(0, Math.min(100, (playerHp / playerMaxHp) * 100));
   const bossHpPct = Math.max(0, Math.min(100, (bossHp / bossMaxHp) * 100));
@@ -1052,48 +1074,61 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
           </motion.div>
         )}
 
-        {/* SPECIAL ABILITY CUTSCENE BANNER */}
+        {/* SPECIAL ABILITY CUTSCENE BANNER (CINEMATIC OVERDRIVE VFX) */}
         {specialCutscene && (
           <motion.div
-            initial={{ scale: 0.7, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 1.2, opacity: 0 }}
-            className="absolute top-1/3 inset-x-0 mx-auto w-fit z-40 bg-gradient-to-r from-amber-500 via-purple-600 to-cyan-500 p-1 rounded-2xl shadow-[0_0_40px_#f59e0b]"
+            initial={{ scale: 0.5, opacity: 0, y: -20 }}
+            animate={{ scale: [1, 1.1, 1], opacity: 1, y: 0 }}
+            exit={{ scale: 1.3, opacity: 0, y: 20 }}
+            transition={{ duration: 0.35 }}
+            className="absolute top-1/4 inset-x-0 mx-auto w-full max-w-xl z-50 pointer-events-none flex flex-col items-center"
           >
-            <div className="bg-slate-950 px-6 py-2.5 rounded-xl font-mono font-black text-sm sm:text-base text-amber-300 tracking-widest text-center">
-              {specialCutscene}
+            <div className="w-full bg-gradient-to-r from-red-600 via-amber-500 via-purple-600 to-cyan-500 p-1 rounded-none shadow-[0_0_60px_#f59e0b] border-y-2 border-amber-300">
+              <div className="bg-black/95 px-8 py-3.5 font-mono font-black text-base sm:text-lg text-amber-300 tracking-widest text-center uppercase flex items-center justify-center gap-3">
+                <Sparkles className="w-6 h-6 text-amber-400 animate-spin" />
+                <span className="drop-shadow-[0_0_12px_#f59e0b]">{specialCutscene}</span>
+                <Sparkles className="w-6 h-6 text-amber-400 animate-spin" />
+              </div>
             </div>
           </motion.div>
         )}
 
-        {/* PIXELATED RPG SLASH EFFECTS (4-HIT COMBO SEQUENCES) */}
+        {/* ULTRA HIGH-INTENSITY SLASH EFFECTS (CROSS-BLADE PLASMA ARCS) */}
         {slashes.map((s) => (
           <motion.div
             key={s.id}
-            initial={{ scale: 0.4, opacity: 1, rotate: s.angle }}
-            animate={{ scale: s.isFinisher ? 2.2 : 1.4, opacity: 0 }}
-            transition={{ duration: s.isFinisher ? 0.32 : 0.22, ease: 'easeOut' }}
+            initial={{ scale: 0.3, opacity: 1, rotate: s.angle }}
+            animate={{ scale: s.isFinisher ? 2.8 : 1.6, opacity: 0 }}
+            transition={{ duration: s.isFinisher ? 0.35 : 0.22, ease: 'easeOut' }}
             style={{ left: s.x, top: s.y }}
             className="absolute -translate-x-1/2 -translate-y-1/2 pointer-events-none z-30 flex items-center justify-center"
           >
-            <svg width="120" height="120" viewBox="0 0 120 120" className="filter drop-shadow-[0_0_12px_rgba(255,255,255,0.8)]">
+            <svg width="150" height="150" viewBox="0 0 150 150" className="filter drop-shadow-[0_0_18px_rgba(255,255,255,0.95)]">
+              {/* Outer Energy Glow Arc */}
               <path
-                d="M 10 30 Q 60 10 110 60 Q 60 40 10 30 Z"
+                d="M 15 40 Q 75 10 135 75 Q 75 45 15 40 Z"
                 fill={s.color}
                 stroke="#FFFFFF"
-                strokeWidth="2"
+                strokeWidth="3"
+                opacity="0.9"
               />
+              {/* Inner Hot Core */}
               <path
-                d="M 25 35 Q 60 22 95 55 Q 60 38 25 35 Z"
+                d="M 30 45 Q 75 22 120 70 Q 75 40 30 45 Z"
                 fill="#FFFFFF"
               />
+              {/* Finisher Cross Blade */}
               {s.isFinisher && (
-                <path
-                  d="M 10 90 Q 60 110 110 60 Q 60 80 10 90 Z"
-                  fill="#FACC15"
-                  stroke="#FFFFFF"
-                  strokeWidth="2"
-                />
+                <>
+                  <path
+                    d="M 15 110 Q 75 140 135 75 Q 75 105 15 110 Z"
+                    fill="#FACC15"
+                    stroke="#FFFFFF"
+                    strokeWidth="3"
+                  />
+                  <line x1="15" y1="15" x2="135" y2="135" stroke="#38BDF8" strokeWidth="5" strokeLinecap="round" />
+                  <line x1="135" y1="15" x2="15" y2="135" stroke="#F43F5E" strokeWidth="5" strokeLinecap="round" />
+                </>
               )}
             </svg>
           </motion.div>

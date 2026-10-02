@@ -80,7 +80,16 @@ export const BossArena: React.FC<BossArenaProps> = ({
   const [playerMaxHp, setPlayerMaxHp] = useState<number>(playerStats.health);
   const [playerShield, setPlayerShield] = useState<number>(0);
   const [playerEnergy, setPlayerEnergy] = useState<number>(0); // 0 to 100
-  const [playerStunTimer, setPlayerStunTimer] = useState<number>(0);
+  const [playerStunTimer, setPlayerStunTimerState] = useState<number>(0);
+  const playerStunTimerRef = useRef<number>(0);
+  const setPlayerStunTimer = useCallback((val: number | ((prev: number) => number)) => {
+    setPlayerStunTimerState((prev) => {
+      const next = typeof val === 'function' ? val(prev) : val;
+      playerStunTimerRef.current = next;
+      return next;
+    });
+  }, []);
+
   const [playerBurnTimer, setPlayerBurnTimer] = useState<number>(0);
 
   // Boss Stats & State
@@ -88,7 +97,16 @@ export const BossArena: React.FC<BossArenaProps> = ({
   const [bossMaxHp, setBossMaxHp] = useState<number>(currentBoss.maxHealth);
   const [bossShield, setBossShield] = useState<number>(0);
   const [bossEnergy, setBossEnergy] = useState<number>(0); // 0 to 100
-  const [bossStunTimer, setBossStunTimer] = useState<number>(0);
+  
+  const [bossStunTimer, setBossStunTimerState] = useState<number>(0);
+  const bossStunTimerRef = useRef<number>(0);
+  const setBossStunTimer = useCallback((val: number | ((prev: number) => number)) => {
+    setBossStunTimerState((prev) => {
+      const next = typeof val === 'function' ? val(prev) : val;
+      bossStunTimerRef.current = next;
+      return next;
+    });
+  }, []);
   const [bossBurnTimer, setBossBurnTimer] = useState<number>(0);
 
   // Visual FX State
@@ -168,8 +186,8 @@ export const BossArena: React.FC<BossArenaProps> = ({
     setBattleState('fighting');
     setRewardsClaimed(false);
 
-    lastPlayerAttackRef.current = Date.now();
-    lastBossAttackRef.current = Date.now();
+    lastPlayerAttackRef.current = 0;
+    lastBossAttackRef.current = 0;
 
     addLog(`⚔️ Battle started against Level ${boss.level}: ${boss.name}!`, 'info');
   }, [equippedAura, selectedLevelIndex, addLog]);
@@ -368,7 +386,7 @@ export const BossArena: React.FC<BossArenaProps> = ({
 
       // 1. Player Auto Attack
       const playerAttackInterval = (1000 / playerStats.attackSpeed) / battleSpeed;
-      if (playerStunTimer <= 0 && now - lastPlayerAttackRef.current >= playerAttackInterval) {
+      if (playerStunTimerRef.current <= 0 && now - lastPlayerAttackRef.current >= playerAttackInterval) {
         lastPlayerAttackRef.current = now;
         sound.playHit();
 
@@ -404,7 +422,7 @@ export const BossArena: React.FC<BossArenaProps> = ({
 
       // 2. Boss Auto Attack
       const bossAttackInterval = (1000 / currentBoss.attackSpeed) / battleSpeed;
-      if (bossStunTimer <= 0 && now - lastBossAttackRef.current >= bossAttackInterval) {
+      if (bossStunTimerRef.current <= 0 && now - lastBossAttackRef.current >= bossAttackInterval) {
         lastBossAttackRef.current = now;
         sound.playHit();
 

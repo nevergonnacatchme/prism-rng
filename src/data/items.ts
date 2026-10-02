@@ -416,7 +416,7 @@ export const ITEMS: RNGItem[] = [
     name: 'Helios Solar Flare',
     emoji: '☀️',
     rarity: 'Legendary',
-    baseChance: 35000, // 1 in 35,000 (0.0028%)
+    baseChance: 25000, // 1 in 25,000
     luckBonus: 560,
     sellValue: 9500,
     description: 'Direct solar coronal loops of thermonuclear fire that burn away poor odds.',
@@ -428,7 +428,7 @@ export const ITEMS: RNGItem[] = [
     name: 'Thunder Kami',
     emoji: '⚡',
     rarity: 'Legendary',
-    baseChance: 45000, // 1 in 45,000 (0.0022%)
+    baseChance: 29000, // 1 in 29,000
     luckBonus: 650,
     sellValue: 12000,
     description: 'The sealed soul of an ancient storm deity crackling with millions of volts of raw heavenly plasma.',
@@ -440,7 +440,7 @@ export const ITEMS: RNGItem[] = [
     name: 'Tempest Leviathan',
     emoji: '🌪️',
     rarity: 'Legendary',
-    baseChance: 60000, // 1 in 60,000 (0.0016%)
+    baseChance: 28000, // 1 in 28,000
     luckBonus: 750,
     sellValue: 16000,
     description: 'A swirling micro-cyclone of gale-force winds orbiting the user.',
@@ -806,7 +806,7 @@ export const ITEMS: RNGItem[] = [
     name: 'Quasar Monolith',
     emoji: '💠',
     rarity: 'Celestial',
-    baseChance: 1200000, // 1 in 1,200,000
+    baseChance: 900000, // 1 in 900,000
     isBiomeExclusive: true,
     exclusiveBiomeId: 'deep_space',
     exclusiveBiomeName: 'Deep Space Singularity',
@@ -1028,7 +1028,7 @@ export const ITEMS: RNGItem[] = [
     name: 'Zephyr Sovereign',
     emoji: '🍃',
     rarity: 'Celestial',
-    baseChance: 1000000, // 1 in 1,000,000
+    baseChance: 920000, // 1 in 920,000
     isBiomeExclusive: true,
     exclusiveBiomeId: 'breezy_highlands',
     exclusiveBiomeName: 'Breezy Highlands',
