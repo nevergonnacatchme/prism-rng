@@ -1,5 +1,6 @@
 import { RNGItem, RarityConfig, RarityTier } from '../types/rng';
 import napoleonImg from '../assets/images/napoleon_aura_1790791276730.jpg';
+import singularityGodheadImg from '../assets/images/singularity_godhead_1790926554615.jpg';
 
 export const RARITY_CONFIGS: Record<RarityTier, RarityConfig> = {
   Common: {
@@ -1036,6 +1037,24 @@ export const ITEMS: RNGItem[] = [
     description: 'Gale mountain spirits swirling emerald leaf twisters around the roller.',
     flavorText: '"Mountain winds carry the blessings of ancient spirits."',
     accentColor: '#10B981',
+  },
+
+  // 9. SUPREME 1 IN 500,000,000 DEEP SPACE SINGULARITY EXCLUSIVE AURA
+  {
+    id: 'singularity_godhead',
+    name: 'Event Horizon Godhead: Prime Omnipotence',
+    emoji: '🌌',
+    rarity: 'Impossible',
+    baseChance: 500000000, // 1 in 500,000,000
+    isBiomeExclusive: true,
+    exclusiveBiomeId: 'deep_space',
+    exclusiveBiomeName: 'Deep Space Singularity',
+    luckBonus: 100000, // +100,000% Base Luck Boost!
+    sellValue: 25000000, // 25,000,000 Shards!
+    imageUrl: singularityGodheadImg,
+    description: 'The supreme cosmic godhead manifested at the center of a supermassive black hole. Erases gravitational physics and annihilates all boss entities.',
+    flavorText: '"I am the beginning, the singularity, and the eternal end of all existence."',
+    accentColor: '#C084FC',
   },
 ];
 

@@ -42,16 +42,16 @@ export const TopBar: React.FC<TopBarProps> = ({
   hasUnreadChat,
 }) => {
   return (
-    <header className="w-full border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
-        {/* Zone 1: Brand title wordmark */}
-        <div className="flex items-center gap-3 shrink-0">
+    <header className="w-full border-b-2 border-slate-800 bg-[#070a0f] backdrop-blur-md sticky top-0 z-50 font-mono">
+      <div className="max-w-7xl mx-auto px-2 sm:px-4 h-12 flex items-center justify-between gap-2">
+        {/* Zone 1: Brand title wordmark (Hard-Edged Steel Monospace) */}
+        <div className="flex items-center gap-2 shrink-0">
           <button
             onClick={() => onTabChange('roll')}
-            className="text-base sm:text-lg font-black tracking-wider text-white hover:text-cyan-400 transition-colors flex items-center gap-2 cursor-pointer font-mono"
+            className="text-xs sm:text-sm font-black tracking-widest text-slate-100 hover:text-cyan-400 transition-colors flex items-center gap-1.5 cursor-pointer font-mono border border-slate-700 bg-[#0d1117] px-2.5 py-1"
           >
-            <span className="w-3 h-3 rounded-full bg-gradient-to-r from-cyan-400 via-amber-300 to-pink-500 shadow-[0_0_12px_#22d3ee] animate-pulse shrink-0" />
-            <span className="uppercase font-black bg-gradient-to-r from-cyan-400 via-amber-300 to-pink-400 bg-clip-text text-transparent tracking-widest">
+            <span className="w-2 h-2 bg-cyan-400 shrink-0" />
+            <span className="uppercase font-black text-slate-100 tracking-widest">
               PRISM RNG
             </span>
           </button>

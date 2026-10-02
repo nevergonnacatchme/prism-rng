@@ -8,7 +8,7 @@ import { RNGItem, InventorySlot, BossLevel } from '../types/rng';
 import { BOSS_LEVELS, getAuraCombatStats, getAuraAbility } from '../data/bosses';
 import { RARITY_CONFIGS } from '../data/items';
 import { sound } from '../utils/audio';
-import { PlayerPixelKnight, GoblinBossSprite, DarkKnightBossSprite } from './PixelSprites';
+import { PlayerPixelKnight, GoblinBossSprite, DarkKnightBossSprite, GargantuanTrollBossSprite } from './PixelSprites';
 
 interface CombatArena2DProps {
   equippedAura: RNGItem;
@@ -968,7 +968,7 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
           </div>
         </div>
 
-        {/* 2D BOSS SPRITE: PIXEL GOBLIN (download (1).jfif) OR DARK KNIGHT (download (2).jfif) */}
+        {/* 2D BOSS SPRITE: LEVEL 10 GARGANTUAN TROLL, DARK KNIGHT, OR GOBLIN */}
         <div
           style={{
             left: `${bossRenderPos.x}px`,
@@ -979,7 +979,24 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
             bossHitFlash ? 'brightness-200' : ''
           }`}
         >
-          {isIronKnight ? (
+          {currentBoss.level === 10 ? (
+            /* FINAL BOSS (LEVEL 10): GARGANTUAN TROLL BEHEMOTH (download (4).jfif) */
+            <div className="relative flex flex-col items-center">
+              <GargantuanTrollBossSprite
+                isAttacking={bossAction === 'swinging'}
+                isChargingQte={bossAction === 'heavy_cleave_charging' || bossAction === 'winding_up'}
+              />
+
+              {/* Boss Nametag */}
+              <div 
+                style={{ transform: `scaleX(${bossFacingLeft ? 1 : -1})` }}
+                className="mt-1 px-3 py-1 rounded-xl bg-black/95 border-2 border-red-500 flex items-center gap-1.5 shadow-[0_0_15px_#ef4444] font-mono text-xs text-red-400 font-extrabold uppercase"
+              >
+                <Crown className="w-4 h-4 text-amber-400 animate-bounce" />
+                <span>{currentBoss.name} (Lv.{currentBoss.level} FINAL BOSS)</span>
+              </div>
+            </div>
+          ) : isIronKnight ? (
             /* TIER 2 BOSS: CRIMSON PLUME DARK KNIGHT (download (2).jfif) */
             <div className="relative flex flex-col items-center">
               <DarkKnightBossSprite

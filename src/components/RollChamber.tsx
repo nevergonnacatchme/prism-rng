@@ -239,10 +239,10 @@ export const RollChamber: React.FC<RollChamberProps> = ({
       </div>
 
       {/* MAIN CENTER SUMMONING PEDESTAL & AURA SHOWCASE */}
-      <div className="relative w-full flex-1 flex flex-col items-center justify-center my-6">
+      <div className="relative w-full flex-1 flex flex-col items-center justify-center my-3">
         {/* Dynamic Glow Aura Rays */}
         <div
-          className="absolute w-88 h-88 sm:w-[500px] sm:h-[500px] rounded-full pointer-events-none transition-all duration-1000 blur-3xl opacity-20"
+          className="absolute w-64 h-64 sm:w-[320px] sm:h-[320px] rounded-full pointer-events-none transition-all duration-1000 blur-2xl opacity-20"
           style={{ backgroundColor: rarityConfig.color }}
         />
 
@@ -251,58 +251,52 @@ export const RollChamber: React.FC<RollChamberProps> = ({
           {/* Outer runic ring */}
           <motion.div
             animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 35, ease: 'linear' }}
-            className="w-72 h-72 sm:w-[420px] sm:h-[420px] rounded-full border border-dashed border-slate-700/60"
+            transition={{ repeat: Infinity, duration: 40, ease: 'linear' }}
+            className="w-56 h-56 sm:w-[320px] sm:h-[320px] rounded-full border border-dashed border-slate-700/50"
           />
           {/* Middle counter-rotating ring */}
           <motion.div
             animate={{ rotate: -360 }}
-            transition={{ repeat: Infinity, duration: 55, ease: 'linear' }}
-            className="absolute w-60 h-60 sm:w-[340px] sm:h-[340px] rounded-full border border-slate-800/80 shadow-[0_0_30px_rgba(255,255,255,0.03)]"
-          />
-          {/* Inner pulse circle */}
-          <motion.div
-            animate={{ scale: [0.96, 1.04, 0.96] }}
-            transition={{ repeat: Infinity, duration: 4, ease: 'easeInOut' }}
-            className="absolute w-44 h-44 sm:w-[260px] sm:h-[260px] rounded-full border border-cyan-500/20"
+            transition={{ repeat: Infinity, duration: 60, ease: 'linear' }}
+            className="absolute w-48 h-48 sm:w-[260px] sm:h-[260px] rounded-full border border-slate-800/80 shadow-[0_0_20px_rgba(255,255,255,0.02)]"
           />
         </div>
 
         {/* Center Presentation Card */}
-        <div className="relative z-10 w-full max-w-md flex flex-col items-center text-center">
+        <div className="relative z-10 w-full max-w-sm flex flex-col items-center text-center">
           <AnimatePresence mode="wait">
             {displayItem ? (
               <motion.div
                 key={displayItem.id + (lastRoll?.rollNumber || 0)}
-                initial={{ scale: 0.82, opacity: 0, y: 20 }}
+                initial={{ scale: 0.88, opacity: 0, y: 12 }}
                 animate={{ scale: 1, opacity: 1, y: 0 }}
-                exit={{ scale: 0.88, opacity: 0 }}
-                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                exit={{ scale: 0.92, opacity: 0 }}
+                transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
                 className="flex flex-col items-center w-full"
               >
-                {/* 2D Item Visual Float Container */}
+                {/* 2D Item Visual Float Container (Compact & Straight Hard-Edged) */}
                 <div
-                  className={`relative w-44 h-44 sm:w-52 sm:h-52 rounded-3xl flex items-center justify-center mb-5 shadow-2xl transition-all duration-500 overflow-hidden ${
-                    isImpossible ? 'ring-4 ring-red-500/70' : ''
+                  className={`relative w-32 h-32 sm:w-36 sm:h-36 rounded-none flex items-center justify-center mb-3 shadow-2xl transition-all duration-300 overflow-hidden ${
+                    isImpossible ? 'ring-2 ring-red-500/80' : ''
                   }`}
                   style={{
                     backgroundColor: rarityConfig.bgColor,
                     border: `2px solid ${rarityConfig.borderColor}`,
-                    boxShadow: `0 0 55px ${rarityConfig.glowColor}`,
+                    boxShadow: `0 0 35px ${rarityConfig.glowColor}`,
                   }}
                 >
                   {displayItem.imageUrl ? (
                     <img
                       src={displayItem.imageUrl}
                       alt={displayItem.name}
-                      className="w-full h-full object-cover rounded-3xl select-none"
+                      className="w-full h-full object-cover rounded-none select-none"
                     />
                   ) : (
                     /* Floating Item Sprite with AuraIcon */
                     <motion.div
-                      animate={{ y: [-5, 5, -5], rotate: [-1.5, 1.5, -1.5] }}
-                      transition={{ repeat: Infinity, duration: 3.5, ease: 'easeInOut' }}
-                      className="select-none filter drop-shadow-2xl flex items-center justify-center"
+                      animate={{ y: [-3, 3, -3] }}
+                      transition={{ repeat: Infinity, duration: 3, ease: 'easeInOut' }}
+                      className="select-none filter drop-shadow-xl flex items-center justify-center"
                     >
                       <AuraIcon item={displayItem} size="hero" showGlow />
                     </motion.div>
@@ -310,42 +304,42 @@ export const RollChamber: React.FC<RollChamberProps> = ({
 
                   {/* Sparkle emblem for top rarities */}
                   {hasCutscene && (
-                    <div className="absolute top-2.5 right-2.5 w-8 h-8 rounded-full bg-slate-950/90 border border-amber-400 flex items-center justify-center shadow-lg">
-                      <Sparkles className="w-4 h-4 text-amber-400 animate-spin" />
+                    <div className="absolute top-2 right-2 w-6 h-6 rounded-full bg-slate-950/90 border border-amber-400 flex items-center justify-center shadow-lg">
+                      <Sparkles className="w-3 h-3 text-amber-400 animate-spin" />
                     </div>
                   )}
                 </div>
 
                 {/* Floating Aura Nametag */}
-                <div className="flex flex-col items-center gap-1.5 mb-2.5">
+                <div className="flex flex-col items-center gap-1 mb-2">
                   <span
-                    className="text-xs uppercase tracking-[0.25em] font-extrabold font-mono px-3 py-0.5 rounded-full"
+                    className="text-[10px] uppercase tracking-[0.2em] font-extrabold font-mono px-2.5 py-0.5 rounded border"
                     style={{
                       color: rarityConfig.color,
                       backgroundColor: `${rarityConfig.color}15`,
-                      border: `1px solid ${rarityConfig.color}40`,
+                      borderColor: `${rarityConfig.color}40`,
                     }}
                   >
                     [ {displayItem.rarity.toUpperCase()} ]
                   </span>
 
-                  <h2 className="text-2xl sm:text-4xl font-black tracking-tight text-white font-mono drop-shadow-lg">
+                  <h2 className="text-xl sm:text-2xl font-black tracking-wider text-white font-mono drop-shadow-md uppercase">
                     {displayItem.name}
                   </h2>
 
                   {/* Chance Bracket */}
-                  <div className="flex items-center gap-2 text-xs font-mono tabular-nums">
+                  <div className="flex items-center gap-2 text-[11px] font-mono tabular-nums">
                     <span className="font-bold text-slate-200">
                       [ 1 in {displayItem.baseChance.toLocaleString()} ]
                     </span>
                     <span className="text-slate-600">·</span>
-                    <span style={{ color: rarityConfig.color }}>
+                    <span style={{ color: rarityConfig.color }} className="font-bold">
                       {formatPercent(displayItem.baseChance)}
                     </span>
                   </div>
                 </div>
 
-                <p className="text-xs text-slate-300 max-w-sm text-center mb-1">
+                <p className="text-[11px] text-slate-400 max-w-xs text-center mb-1 leading-snug">
                   {displayItem.description}
                 </p>
 

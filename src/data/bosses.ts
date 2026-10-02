@@ -258,23 +258,42 @@ export const BOSS_LEVELS: BossLevel[] = [
 
 // Custom abilities defined for key auras
 export const CUSTOM_AURA_ABILITIES: Record<string, { ability: AuraAbility; stats: AuraCombatStats }> = {
+  singularity_godhead: {
+    ability: {
+      name: 'Prime Event Horizon Annihilation',
+      description: 'Collapses the entire spatial matrix into a singularity, dealing 500,000 True Damage, time-freezing the boss for 10.0 seconds, and granting a 1,000,000 HP Void Shield!',
+      cooldownSec: 3.5,
+      multiplier: 350.0,
+      effectType: 'time_freeze',
+      effectValue: 10.0,
+      icon: '🌌',
+      voiceLine: '"All matter, space, and time shall collapse into my palm."',
+    },
+    stats: {
+      health: 4500000, // 4.5 Million HP!
+      attack: 85000,   // 85,000 ATK!
+      defense: 3500,   // 3,500 Defense!
+      attackSpeed: 3.8,
+      critChance: 1.0,  // 100% Critical Strike Chance!
+    },
+  },
   sanctuary_singularity: {
     ability: {
-      name: 'Infinite Void Singularity',
-      description: 'Collapses reality into a cosmic black hole, dealing 5,000% true damage, granting a 2,500 HP shield, and freezing the boss for 4.0 seconds!',
-      cooldownSec: 4.5,
-      multiplier: 50.0,
-      effectType: 'damage',
-      effectValue: 2500,
+      name: 'Infinite Void Eradication',
+      description: 'Eradicates the battlefield with event horizon singularity gravity, dealing 250,000 True Damage, freezing boss for 8.0s, and granting 500,000 HP shield!',
+      cooldownSec: 4.0,
+      multiplier: 200.0,
+      effectType: 'time_freeze',
+      effectValue: 8.0,
       icon: '🌌',
       voiceLine: '"Reality collapses before the Infinite Void."',
     },
     stats: {
-      health: 35000,
-      attack: 4500,
-      defense: 500,
-      attackSpeed: 2.2,
-      critChance: 0.85,
+      health: 3000000, // 3.0 Million HP!
+      attack: 55000,   // 55,000 ATK!
+      defense: 2200,   // 2,200 Defense!
+      attackSpeed: 3.2,
+      critChance: 0.95,
     },
   },
   ouroboros_infinite: {
@@ -638,13 +657,13 @@ export function getAuraCombatStats(item: RNGItem): AuraCombatStats {
   // Scaling based on rarity (Massively Buffed!)
   switch (item.rarity) {
     case 'Impossible':
-      return { health: 18000, attack: 2200, defense: 300, attackSpeed: 1.8, critChance: 0.5 };
+      return { health: 2200000, attack: 38000, defense: 1500, attackSpeed: 2.8, critChance: 0.9 };
     case 'Transcendent':
-      return { health: 12000, attack: 1500, defense: 220, attackSpeed: 1.65, critChance: 0.4 };
+      return { health: 1500000, attack: 25000, defense: 1000, attackSpeed: 2.4, critChance: 0.8 };
     case 'Celestial':
-      return { health: 8500, attack: 1000, defense: 160, attackSpeed: 1.5, critChance: 0.3 };
+      return { health: 900000, attack: 15000, defense: 600, attackSpeed: 2.0, critChance: 0.65 };
     case 'Mythic':
-      return { health: 6000, attack: 700, defense: 110, attackSpeed: 1.35, critChance: 0.25 };
+      return { health: 450000, attack: 8000, defense: 350, attackSpeed: 1.75, critChance: 0.5 };
     case 'Legendary':
       return { health: 4000, attack: 480, defense: 80, attackSpeed: 1.25, critChance: 0.2 };
     case 'Epic':

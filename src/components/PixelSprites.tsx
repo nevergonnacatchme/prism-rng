@@ -231,3 +231,112 @@ export const DarkKnightBossSprite: React.FC<{
     </div>
   );
 };
+
+// 4. GARGANTUAN TROLL FINAL BOSS SPRITE (Level 10 Final Boss): Tall, chunky light-green mutant troll with giant razor-fanged grin, round belly, red loincloth, and spiked mace (download (4).jfif)
+export const GargantuanTrollBossSprite: React.FC<{
+  isAttacking?: boolean;
+  isChargingQte?: boolean;
+}> = ({ isAttacking = false, isChargingQte = false }) => {
+  const maceAngle = isChargingQte ? -110 : isAttacking ? 55 : 0;
+
+  return (
+    <div className="relative flex flex-col items-center select-none filter drop-shadow-2xl">
+      <svg
+        width="136"
+        height="168"
+        viewBox="0 0 136 168"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{ imageRendering: 'pixelated' }}
+      >
+        {/* Massive Hunched Traps / Shoulder Hump */}
+        <path d="M38 24 Q68 10 98 24 L108 50 L28 50 Z" fill="#4D7C0F" />
+        <path d="M42 26 Q68 14 94 26 L102 48 L34 48 Z" fill="#65A30D" />
+
+        {/* Hunched Head (Low sitting between shoulder traps) */}
+        <rect x="44" y="16" width="48" height="32" fill="#65A30D" rx="6" />
+        <rect x="48" y="18" width="40" height="26" fill="#84CC16" rx="4" />
+
+        {/* Large Pointed Ears extending out */}
+        <path d="M44 24 L24 16 L42 34 Z" fill="#65A30D" />
+        <path d="M42 26 L28 20 L40 32 Z" fill="#4D7C0F" />
+        <path d="M92 24 L112 16 L94 34 Z" fill="#65A30D" />
+        <path d="M94 26 L108 20 L96 32 Z" fill="#4D7C0F" />
+
+        {/* Glowing Eyes */}
+        <rect x="52" y="22" width="10" height="7" fill="#FEF08A" rx="1" />
+        <rect x="56" y="24" width="4" height="4" fill="#1F2937" />
+        <rect x="74" y="22" width="10" height="7" fill="#FEF08A" rx="1" />
+        <rect x="76" y="24" width="4" height="4" fill="#1F2937" />
+
+        {/* GIANT WIDE RAZOR-FANGED GRINNING MOUTH (download (4).jfif signature look) */}
+        <rect x="48" y="32" width="40" height="12" fill="#090D16" rx="3" />
+        {/* Top Sharp Fangs */}
+        <polygon points="50,32 53,38 56,32" fill="#FFFFFF" />
+        <polygon points="56,32 59,38 62,32" fill="#FFFFFF" />
+        <polygon points="62,32 65,38 68,32" fill="#FFFFFF" />
+        <polygon points="68,32 71,38 74,32" fill="#FFFFFF" />
+        <polygon points="74,32 77,38 80,32" fill="#FFFFFF" />
+        <polygon points="80,32 83,38 86,32" fill="#FFFFFF" />
+        {/* Bottom Sharp Fangs */}
+        <polygon points="52,44 55,38 58,44" fill="#FFFFFF" />
+        <polygon points="58,44 61,38 64,44" fill="#FFFFFF" />
+        <polygon points="64,44 67,38 70,44" fill="#FFFFFF" />
+        <polygon points="70,44 73,38 76,44" fill="#FFFFFF" />
+        <polygon points="76,44 79,38 82,44" fill="#FFFFFF" />
+
+        {/* HUGE ROTUND / CHUNKY BLOATED BELLY (download (4).jfif) */}
+        <ellipse cx="68" cy="80" rx="42" ry="36" fill="#4D7C0F" />
+        <ellipse cx="68" cy="80" rx="38" ry="32" fill="#65A30D" />
+        <ellipse cx="68" cy="82" rx="30" ry="26" fill="#84CC16" />
+        {/* Belly Button Line */}
+        <circle cx="68" cy="88" r="3" fill="#365314" />
+
+        {/* Muscular Long Left & Right Arms */}
+        <path d="M28 48 Q18 70 24 105 L34 105 Q30 70 38 48 Z" fill="#65A30D" />
+        <path d="M108 48 Q118 70 112 105 L102 105 Q106 70 98 48 Z" fill="#65A30D" />
+
+        {/* RED / CRIMSON TATTERED LOINCLOTH BRIEFS (download (4).jfif) */}
+        <path d="M38 102 L98 102 L90 125 L46 125 Z" fill="#7F1D1D" />
+        <path d="M42 104 L94 104 L86 123 L50 123 Z" fill="#991B1B" />
+        <path d="M46 106 L90 106 L82 121 L54 121 Z" fill="#DC2626" />
+
+        {/* Thick Muscular Legs & Feet */}
+        <rect x="42" y="122" width="18" height="34" fill="#4D7C0F" rx="3" />
+        <rect x="76" y="122" width="18" height="34" fill="#4D7C0F" rx="3" />
+        <rect x="44" y="124" width="14" height="30" fill="#65A30D" />
+        <rect x="78" y="124" width="14" height="30" fill="#65A30D" />
+        {/* Feet / Toes */}
+        <rect x="36" y="152" width="26" height="12" fill="#365314" rx="3" />
+        <rect x="74" y="152" width="26" height="12" fill="#365314" rx="3" />
+
+        {/* GIANT SPIKED MACE / MORNINGSTAR BALL ON A STICK (download (4).jfif) */}
+        <g
+          transform={`translate(30, 95) rotate(${maceAngle})`}
+          style={{ transformOrigin: '0px 0px', transition: 'transform 0.15s ease-out' }}
+        >
+          {/* Wooden Handle Stick */}
+          <rect x="-6" y="0" width="12" height="60" fill="#78350F" transform="rotate(-30)" />
+          <rect x="-4" y="0" width="8" height="58" fill="#92400E" transform="rotate(-30)" />
+
+          {/* Heavy Iron Spiked Mace Ball at the end */}
+          <g transform="translate(28, 48)">
+            <circle cx="0" cy="0" r="20" fill="#1F2937" />
+            <circle cx="0" cy="0" r="17" fill="#374151" />
+            <circle cx="-4" cy="-4" r="14" fill="#4B5563" />
+
+            {/* Iron Spikes */}
+            <polygon points="0,-20 -5,-32 5,-32" fill="#E5E7EB" />
+            <polygon points="20,0 32,-5 32,5" fill="#E5E7EB" />
+            <polygon points="0,20 -5,32 5,32" fill="#E5E7EB" />
+            <polygon points="-20,0 -32,-5 -32,5" fill="#E5E7EB" />
+            <polygon points="14,14 24,24 18,26" fill="#E5E7EB" />
+            <polygon points="-14,-14 -24,-24 -18,-26" fill="#E5E7EB" />
+            <polygon points="14,-14 24,-24 26,-18" fill="#E5E7EB" />
+            <polygon points="-14,14 -24,24 -26,18" fill="#E5E7EB" />
+          </g>
+        </g>
+      </svg>
+    </div>
+  );
+};

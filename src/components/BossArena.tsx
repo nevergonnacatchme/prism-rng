@@ -52,11 +52,11 @@ export const BossArena: React.FC<BossArenaProps> = ({
   shards,
   onAddShards,
 }) => {
-  // Unlocked boss level (1 to 5, persisted in localStorage)
+  // Unlocked boss level (1 to 10, persisted in localStorage)
   const [unlockedLevel, setUnlockedLevel] = useState<number>(() => {
     try {
       const saved = localStorage.getItem('coolers_boss_unlocked_level');
-      return saved ? Math.max(1, Math.min(5, parseInt(saved, 10))) : 1;
+      return saved ? Math.max(1, Math.min(BOSS_LEVELS.length, parseInt(saved, 10))) : 1;
     } catch {
       return 1;
     }
@@ -322,8 +322,8 @@ export const BossArena: React.FC<BossArenaProps> = ({
     setBattleState('victory');
     addLog(`🏆 VICTORY! Level ${currentBoss.level} ${currentBoss.name} has been defeated!`, 'info');
 
-    // Unlock next level if applicable
-    if (currentBoss.level < 5 && unlockedLevel <= currentBoss.level) {
+    // Unlock next level if applicable (Up to Level 10)
+    if (currentBoss.level < BOSS_LEVELS.length && unlockedLevel <= currentBoss.level) {
       const nextLevel = currentBoss.level + 1;
       setUnlockedLevel(nextLevel);
       try {
@@ -542,11 +542,11 @@ export const BossArena: React.FC<BossArenaProps> = ({
             </button>
           </div>
           <p className="text-xs text-slate-400 mt-0.5">
-            Equip your best auras and sit back while they fight through 5 colossal AI boss levels automatically!
+            Equip your best auras and fight through all 10 colossal AI boss levels!
           </p>
         </div>
 
-        {/* Level Selector Buttons (1 to 5) */}
+        {/* Level Selector Buttons (1 to 10) */}
         <div className="flex items-center gap-1.5 overflow-x-auto max-w-full pb-1">
           {BOSS_LEVELS.map((boss, idx) => {
             const isUnlocked = boss.level <= unlockedLevel;

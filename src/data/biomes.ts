@@ -116,6 +116,7 @@ export const BIOMES: Biome[] = [
     description: 'The silent cosmic expanse between distant galaxies, illuminated by drifting constellations and shooting meteors.',
     flavorQuote: '"Countless superclusters whisper secrets to those who dare wander the stars."',
     boostedAuras: [
+      { itemId: 'singularity_godhead', multiplier: 30.0 },
       { itemId: 'supernova_fragment', multiplier: 15.0 },
       { itemId: 'galactic_pulsar', multiplier: 12.0 },
       { itemId: 'quasar_nova', multiplier: 8.5 },

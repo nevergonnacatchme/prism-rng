@@ -1004,6 +1004,7 @@ export default function App() {
             equippedItemId={equippedItemId}
             onEquipItem={handleEquipItem}
             onUnequipItem={handleUnequipItem}
+            onSalvageItem={handleSalvageItem}
             shards={shards}
             totalRolls={totalRolls}
             luckMultiplier={finalLuckMultiplier}

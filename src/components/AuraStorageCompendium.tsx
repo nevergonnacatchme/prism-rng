@@ -13,6 +13,7 @@ interface AuraStorageCompendiumProps {
   equippedItemId: string | null;
   onEquipItem: (item: RNGItem) => void;
   onUnequipItem: () => void;
+  onSalvageItem?: (item: RNGItem, count: number) => void;
   shards: number;
   totalRolls: number;
   luckMultiplier: number;
@@ -26,6 +27,7 @@ export const AuraStorageCompendium: React.FC<AuraStorageCompendiumProps> = ({
   equippedItemId,
   onEquipItem,
   onUnequipItem,
+  onSalvageItem,
   shards,
   totalRolls,
   luckMultiplier,
@@ -206,7 +208,7 @@ export const AuraStorageCompendium: React.FC<AuraStorageCompendiumProps> = ({
 
               {/* Large Aura Emblem / Image Preview */}
               <div 
-                className="w-full h-36 rounded-xl flex items-center justify-center relative overflow-hidden border"
+                className="w-full h-36 rounded-none flex items-center justify-center relative overflow-hidden border-2"
                 style={{
                   backgroundColor: '#07090e',
                   borderColor: RARITY_CONFIGS[selectedItem.rarity].borderColor,
@@ -219,14 +221,14 @@ export const AuraStorageCompendium: React.FC<AuraStorageCompendiumProps> = ({
                 )}
 
                 {isCurrentEquipped && (
-                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-bold text-[10px] uppercase tracking-wider">
+                  <div className="absolute top-2 right-2 px-2 py-0.5 rounded-none bg-emerald-500 text-slate-950 font-bold text-[10px] uppercase tracking-wider">
                     EQUIPPED
                   </div>
                 )}
               </div>
 
               {/* [ Information ] Box */}
-              <div className="p-3.5 rounded-xl bg-[#07090e] border border-[#1c2432] flex flex-col gap-2 text-xs">
+              <div className="p-3 rounded-none bg-[#07090e] border border-[#1c2432] flex flex-col gap-2 text-xs">
                 <span className="text-slate-400 font-bold text-[11px] uppercase tracking-widest border-b border-[#1c2432] pb-1">
                   [ Information ]
                 </span>
@@ -325,6 +327,24 @@ export const AuraStorageCompendium: React.FC<AuraStorageCompendiumProps> = ({
               >
                 {isCurrentLocked ? <Lock className="w-3.5 h-3.5 text-amber-400" /> : <Unlock className="w-3.5 h-3.5 text-slate-400" />}
                 <span>{isCurrentLocked ? 'LOCKED (PROTECTED)' : 'LOCK AURA'}</span>
+              </button>
+
+              {/* Sell / Salvage Button */}
+              <button
+                onClick={() => {
+                  if (onSalvageItem && selectedItem && !isCurrentLocked) {
+                    onSalvageItem(selectedItem, 1);
+                    sound.playCoin();
+                  }
+                }}
+                disabled={isCurrentLocked || !onSalvageItem}
+                className={`w-full py-2.5 rounded-lg font-bold text-xs uppercase tracking-widest transition-all border flex items-center justify-center gap-1.5 ${
+                  isCurrentLocked
+                    ? 'bg-[#121620] text-slate-600 border-[#1c2432] cursor-not-allowed'
+                    : 'bg-[#2d220b] hover:bg-[#3d2b0e] text-amber-300 border-amber-500/80 shadow-lg cursor-pointer'
+                }`}
+              >
+                <span>{isCurrentLocked ? '[ CANNOT SELL LOCKED ]' : `[ SELL / SALVAGE (+💎 ${selectedItem.sellValue.toLocaleString()}) ]`}</span>
               </button>
             </div>
           )}
