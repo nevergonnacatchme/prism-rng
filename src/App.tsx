@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import { TopBar, NavTab } from './components/TopBar';
 import { RollChamber } from './components/RollChamber';
 import { AuraStorageCompendium } from './components/AuraStorageCompendium';
@@ -1105,6 +1106,9 @@ export default function App() {
           }
         }}
       />
+
+      {/* Vercel Web Analytics */}
+      <Analytics />
     </div>
   );
 }
