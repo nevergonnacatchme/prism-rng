@@ -1,0 +1,8 @@
+{
+  "name": "Prism RNG",
+  "description": "Prism RNG - A 2D probability RNG roller game with rolling animations, rare item drops, 10-boss combat arena, inventory system, and alchemist lab.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
