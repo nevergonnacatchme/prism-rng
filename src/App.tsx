@@ -482,13 +482,15 @@ export default function App() {
         rolledItem = ITEMS.find((i) => i.id === 'pebble')!;
       }
 
-      // Chance for a rare Biome Shift Event on roll!
-      const rolledBiome = rollRandomBiome();
-      if (rolledBiome && rolledBiome.id !== currentBiome.id) {
-        setCurrentBiome(rolledBiome);
-        setBiomeRemainingSec(rolledBiome.durationSeconds);
-        sound.playRareAlert();
-        broadcastBiomeChange(rolledBiome, rolledBiome.durationSeconds);
+      // Chance for a rare Biome Shift Event on roll (Only if currently in Clear Horizon)
+      if (currentBiome.id === 'clear_horizon') {
+        const rolledBiome = rollRandomBiome();
+        if (rolledBiome && rolledBiome.id !== currentBiome.id) {
+          setCurrentBiome(rolledBiome);
+          setBiomeRemainingSec(120);
+          sound.playRareAlert();
+          broadcastBiomeChange(rolledBiome, 120);
+        }
       }
 
       const newRollCount = totalRolls + 1;

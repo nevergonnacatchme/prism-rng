@@ -48,7 +48,7 @@ export const BIOMES: Biome[] = [
       { itemId: 'singularity_singlet', multiplier: 4.0 },
     ],
     ambientParticleType: 'snow',
-    durationSeconds: 110,
+    durationSeconds: 120,
   },
   {
     id: 'magma_cavern',
@@ -67,7 +67,7 @@ export const BIOMES: Biome[] = [
       { itemId: 'zenith_hyperion', multiplier: 4.5 },
     ],
     ambientParticleType: 'fire',
-    durationSeconds: 100,
+    durationSeconds: 120,
   },
   {
     id: 'electrified_tempest',
@@ -85,7 +85,7 @@ export const BIOMES: Biome[] = [
       { itemId: 'pulsar_core', multiplier: 5.0 },
     ],
     ambientParticleType: 'thunder',
-    durationSeconds: 90,
+    durationSeconds: 120,
   },
   {
     id: 'abyssal_rift',
@@ -104,7 +104,7 @@ export const BIOMES: Biome[] = [
       { itemId: 'eclipse_scythe', multiplier: 5.5 },
     ],
     ambientParticleType: 'void',
-    durationSeconds: 85,
+    durationSeconds: 120,
   },
   {
     id: 'deep_space',
@@ -124,7 +124,7 @@ export const BIOMES: Biome[] = [
       { itemId: 'nebula_weaver', multiplier: 7.0 },
     ],
     ambientParticleType: 'space',
-    durationSeconds: 80,
+    durationSeconds: 120,
   },
   {
     id: 'quantum_mirage',
@@ -142,7 +142,7 @@ export const BIOMES: Biome[] = [
       { itemId: 'ouroboros_infinite', multiplier: 8.0 },
     ],
     ambientParticleType: 'glitch',
-    durationSeconds: 75,
+    durationSeconds: 120,
   },
   {
     id: 'celestial_sanctuary',
@@ -161,7 +161,7 @@ export const BIOMES: Biome[] = [
       { itemId: 'zenith_hyperion', multiplier: 10.0 },
     ],
     ambientParticleType: 'celestial',
-    durationSeconds: 70,
+    durationSeconds: 120,
   },
 ];
 

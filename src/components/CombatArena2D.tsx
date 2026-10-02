@@ -147,7 +147,13 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
   });
 
   // Boss Melee AI States: 'walking' | 'winding_up' | 'swinging' | 'heavy_cleave_charging' | 'recovering'
-  const [bossAction, setBossAction] = useState<'walking' | 'winding_up' | 'swinging' | 'heavy_cleave_charging' | 'recovering'>('walking');
+  const [bossAction, setBossActionState] = useState<'walking' | 'winding_up' | 'swinging' | 'heavy_cleave_charging' | 'recovering'>('walking');
+  const bossActionRef = useRef<'walking' | 'winding_up' | 'swinging' | 'heavy_cleave_charging' | 'recovering'>('walking');
+  
+  const setBossAction = useCallback((act: 'walking' | 'winding_up' | 'swinging' | 'heavy_cleave_charging' | 'recovering') => {
+    bossActionRef.current = act;
+    setBossActionState(act);
+  }, []);
   const [bossSwingArc, setBossSwingArc] = useState<boolean>(false);
 
   // Controls & Game Speed
@@ -621,7 +627,7 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
       }
 
       // Random Chance to trigger a Big Swing with Timing Dodge Bar (Every ~6 seconds)
-      const shouldTriggerHeavyCleave = Math.random() < 0.08 && !qteRef.current.active && bossAction === 'walking';
+      const shouldTriggerHeavyCleave = Math.random() < 0.08 && !qteRef.current.active && bossActionRef.current === 'walking';
 
       if (shouldTriggerHeavyCleave) {
         setBossAction('heavy_cleave_charging');
@@ -642,10 +648,10 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
         }, 1200 / gameSpeed);
       } 
       // Normal Melee Chasing & Swings
-      else if (absDist > 90 && bossAction === 'walking') {
+      else if (absDist > 90 && bossActionRef.current === 'walking') {
         const walkSpeed = (2.2 + currentBoss.level * 0.3) * gameSpeed;
         b.x += faceLeft ? -walkSpeed : walkSpeed;
-      } else if (absDist <= 90 && bossAction === 'walking') {
+      } else if (absDist <= 90 && bossActionRef.current === 'walking') {
         setBossAction('winding_up');
 
         setTimeout(() => {
@@ -700,7 +706,7 @@ export const CombatArena2D: React.FC<CombatArena2DProps> = ({
     }, 50);
 
     return () => clearInterval(interval);
-  }, [battleState, isPaused, gameSpeed, autoM1, bossAction, comboStep, currentBoss, playerStats, executePlayerM1]);
+  }, [battleState, isPaused, gameSpeed, autoM1, comboStep, currentBoss, playerStats, executePlayerM1, setBossAction]);
 
   const playerHpPct = Math.max(0, Math.min(100, (playerHp / playerMaxHp) * 100));
   const bossHpPct = Math.max(0, Math.min(100, (bossHp / bossMaxHp) * 100));
